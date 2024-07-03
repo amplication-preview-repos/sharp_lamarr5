@@ -1,0 +1,60 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Candidate {
+  createdAt DateTime   @default(now())
+  email     String?
+  firstName String?
+  id        String     @id @default(cuid())
+  lastName  String?
+  referrals Referral[]
+  resume    Json?
+  updatedAt DateTime   @updatedAt
+}
+
+model Referral {
+  candidate   Candidate?          @relation(fields: [candidateId], references: [id])
+  candidateId String?
+  createdAt   DateTime            @default(now())
+  id          String              @id @default(cuid())
+  referrer    String?
+  remarks     String?
+  status      EnumReferralStatus?
+  updatedAt   DateTime            @updatedAt
+}
+
+model Connection {
+  connectedAt      DateTime?
+  connectionStatus EnumConnectionConnectionStatus?
+  createdAt        DateTime                        @default(now())
+  id               String                          @id @default(cuid())
+  updatedAt        DateTime                        @updatedAt
+  userA            String?
+  userB            String?
+}
+
+model User {
+  createdAt DateTime @default(now())
+  email     String?  @unique
+  firstName String?
+  id        String   @id @default(cuid())
+  lastName  String?
+  password  String
+  roles     Json
+  updatedAt DateTime @updatedAt
+  username  String   @unique
+}
+
+enum EnumReferralStatus {
+  Option1
+}
+
+enum EnumConnectionConnectionStatus {
+  Option1
+}
